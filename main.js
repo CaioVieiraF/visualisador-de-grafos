@@ -5,6 +5,7 @@ const canvas = document.querySelector('canvas#canvas');
 const screen = canvas.getContext('2d');
 const radius = 3;
 let dotsPos = [];
+let drawLine = false;
 
 window.addEventListener('mousedown', (e) => {
     const rect = canvas.getBoundingClientRect()
@@ -43,7 +44,7 @@ function addDot(xPos, yPos){
     screen.arc(xPos, yPos, radius, 0, 2*Math.PI);
     screen.fill();
     screen.stroke();
-    if (dotsPos.length >= 2) {
+    if (dotsPos.length >= 2 && drawLine) {
         addLine(
             [
                 dotsPos[dotsPos.length-2][0],
@@ -54,6 +55,15 @@ function addDot(xPos, yPos){
                 dotsPos[dotsPos.length-1][1]
             ]
         );
+    }
+}
+
+function changeDotLineMode(x) {
+    drawLine = !drawLine;
+    if (drawLine) {
+        x.innerHTML = 'Dot';
+    } else {
+        x.innerHTML = 'Line';
     }
 }
 
