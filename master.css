@@ -61,7 +61,7 @@ div.bar button:first-child{
     border-radius: 2rem 0 0 2rem;
 }
 
-div.bar button:hover {
+button:hover {
     opacity: 0.6;
 }
 
@@ -133,30 +133,14 @@ div.theme input:checked ~ button {
     height: 3rem;
 }
 
-div.theme button:hover {
-    background-color: #345263;
-}
-
-div.theme button.light {
+/* div.theme button.light {
     background-color: var(--light-theme-primary);
-}
-
-div.theme button.light:hover {
-    background-color: var(--light-theme-secondary);
 }
 
 div.theme button.dark {
     background-color: var(--dark-theme-primary);
 }
 
-div.theme button.dark:hover {
-    background-color: var(--dark-theme-secondary);
-}
-
 div.theme button.pastel-green {
     background-color: var(--green-theme-primary);
-}
-
-div.theme button.pastel-green:hover {
-    background-color: var(--green-theme-secondary);
-}
+} */
