@@ -5,6 +5,7 @@ const canvas = document.querySelector('canvas#canvas');
 const screen = canvas.getContext('2d');
 const radius = 3;
 let dotsPos = [];
+let lastClicked = [];
 let drawLine = false;
 
 window.addEventListener('mousedown', (e) => {
@@ -12,17 +13,31 @@ window.addEventListener('mousedown', (e) => {
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
     if (e.target === canvas && e.buttons === 1){
-        let clickedOnDot = false;
+        let clickedOnDot = {
+            condition : false,
+            x : 0,
+            y : 0
+        };
         for(let each = 0; each < dotsPos.length; each++) {
             const dotX = dotsPos[each][0];
             const dotY = dotsPos[each][1];
-            if (x > dotX-radius && x < dotX+radius && y > dotY-radius && y < dotY+radius) {
-                clickedOnDot = true;
+            const colisionRadius = radius + 2;
+            if (x > dotX-colisionRadius && x < dotX+colisionRadius && y > dotY-colisionRadius && y < dotY+colisionRadius) {
+                clickedOnDot.condition = true;
+                clickedOnDot.x = dotX;
+                clickedOnDot.y = dotY;
             }
         }
 
-        if (clickedOnDot) {
-            console.log('clicked on dot!');
+        if (clickedOnDot.condition && lastClicked[0] != clickedOnDot.x && lastClicked[1] != clickedOnDot.y) {
+            addLine(
+                lastClicked,
+                [
+                    clickedOnDot.x,
+                    clickedOnDot.y
+                ]
+            );
+            lastClicked = [clickedOnDot.x, clickedOnDot.y];
         } else {
             addDot(x, y);
         }
@@ -45,17 +60,9 @@ function addDot(xPos, yPos){
     screen.fill();
     screen.stroke();
     if (dotsPos.length >= 2 && drawLine) {
-        addLine(
-            [
-                dotsPos[dotsPos.length-2][0],
-                dotsPos[dotsPos.length-2][1]
-            ],
-            [
-                dotsPos[dotsPos.length-1][0],
-                dotsPos[dotsPos.length-1][1]
-            ]
-        );
+        addLine(lastClicked, dotsPos[dotsPos.length-1]);
     }
+    lastClicked = [xPos, yPos];
 }
 
 function changeDotLineMode(x) {
