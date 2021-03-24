@@ -26,8 +26,6 @@ function main() {
                     clickedOnDot.condition = true;
                     clickedOnDot.x = dotX;
                     clickedOnDot.y = dotY;
-                    dotsPos[each][2] = window.prompt("Novo nome", dotsPos[each][2]);
-                    reRender();
                 }
             }
 
@@ -41,14 +39,14 @@ function main() {
                 );
                 lastClicked = [clickedOnDot.x, clickedOnDot.y];
             } else {
-                const label = "Ponto " + dotsPos.length;
+                const label = window.prompt("Nova vértice", "Ponto " + dotsPos.length);
                 addDot(x, y, label);
             }
         }
     });
 
     function addRandomDot() {
-        const label = "Ponto " + dotsPos.length;
+        const label = window.prompt("Nova vértice", "Ponto " + dotsPos.length);
         const padding = 5;
         addDot(
             Math.random() * (canvas.width - padding - padding) + padding,
