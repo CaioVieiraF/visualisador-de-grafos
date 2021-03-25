@@ -4,6 +4,7 @@ const radius = 10;
 let dotsPos = [];
 let lastClicked = [];
 let drawLine = false;
+let lastMove = { first: true, dot: false, line: false, previus: {}};
 
 function main() {
 
@@ -11,11 +12,13 @@ function main() {
         const rect = canvas.getBoundingClientRect()
         const x = e.clientX - rect.left
         const y = e.clientY - rect.top
-        if (e.target === canvas && e.buttons === 1) {
+
+        if (e.target === canvas && e.buttons === 1 || e.buttons === 2) {
             let clickedOnDot = {
                 condition: false,
                 x: 0,
-                y: 0
+                y: 0,
+                from: null
             };
             for (let each = 0; each < dotsPos.length; each++) {
                 const dotX = dotsPos[each][0];
@@ -26,21 +29,34 @@ function main() {
                     clickedOnDot.condition = true;
                     clickedOnDot.x = dotX;
                     clickedOnDot.y = dotY;
+                    clickedOnDot.to = each;
                 }
             }
 
-            if (clickedOnDot.condition && lastClicked[0] != clickedOnDot.x && lastClicked[1] != clickedOnDot.y) {
+            if (clickedOnDot.condition && lastClicked[0] != clickedOnDot.x && lastClicked[1] != clickedOnDot.y && e.buttons === 2) {
+                dotsPos[clickedOnDot.to][3].push(lastClicked[2]);
+                dotsPos[lastClicked[2]][3].push(clickedOnDot.to);
                 addLine(
-                    lastClicked,
+                    [lastClicked[0], lastClicked[1]],
                     [
                         clickedOnDot.x,
                         clickedOnDot.y
                     ]
                 );
-                lastClicked = [clickedOnDot.x, clickedOnDot.y];
+                lastClicked = [clickedOnDot.x, clickedOnDot.y, clickedOnDot.to];
+
+                lastMove.previus = lastMove;
+                if (lastMove.first) lastMove.first = false;
+                lastMove.dot = false;
+                lastMove.line = true;
             } else {
+                lastClicked = [];
                 const label = window.prompt("Nova vértice", "Ponto " + dotsPos.length);
                 addDot(x, y, label);
+                lastMove.previus = lastMove;
+                if (lastMove.first) lastMove.first = false;
+                lastMove.dot = true;
+                lastMove.line = false;
             }
         }
     });
@@ -59,6 +75,9 @@ function main() {
     function clearScreen() {
         screen.clearRect(0, 0, canvas.width, canvas.height);
         dotsPos = [];
+        lastMove = { first: true, dot: false, line: false, previus: {} };
+        lastClicked = [];
+
     }
 
     function changeDotLineMode(x) {
@@ -66,7 +85,14 @@ function main() {
     }
 
     function undoMovement() {
-        window.alert('Not implemented, yet');
+        if (lastMove.dot) {
+            dotsPos.pop();
+        } else {
+            dotsPos[dotsPos[lastClicked[2]][3]][3].pop();
+            dotsPos[lastClicked[2]][3].pop();
+        }
+        reRender();
+        lastMove = previus;
     }
 
     themeOptions();
@@ -87,6 +113,13 @@ function main() {
         newButton.innerHTML = buttonOption;
         optionsBar.appendChild(newButton);
     }
+
+    //canvas.oncontextmenu = (e) => {
+    //    e.preventDefault();
+    //}
+    canvas.addEventListener("contextmenu", function(e){
+      e.preventDefault();
+    }, false);
 }
 
 function themeOptions() {
@@ -127,7 +160,7 @@ function addLine(from, to) {
 }
 
 function addDot(xPos, yPos, label, render=true) {
-    if (render) dotsPos.push([xPos, yPos, label]);
+    if (render) dotsPos.push([xPos, yPos, label, []]);
     screen.fillStyle = 'black';
     screen.beginPath();
     screen.arc(xPos, yPos, radius, 0, 2 * Math.PI);
@@ -137,15 +170,20 @@ function addDot(xPos, yPos, label, render=true) {
     screen.textAlign = "center";
     screen.fillText(label, xPos, yPos + radius + 12);
     if (dotsPos.length >= 2 && drawLine) {
-        addLine(lastClicked, dotsPos[dotsPos.length - 1]);
+        addLine([lastClicked[0], lastClicked[1]], dotsPos[dotsPos.length - 1]);
     }
-    lastClicked = [xPos, yPos];
+    lastClicked = [xPos, yPos, dotsPos.length-1];
 }
 
 function reRender(){
     screen.clearRect(0, 0, canvas.width, canvas.height);
-    for (let dot = 0; dot < dotsPos.length; dot++){
-        addDot(dotsPos[dot][0], dotsPos[dot][1], dotsPos[dot][2], false);
+    for (let i = 0; i < dotsPos.length; i++){
+        const dot = dotsPos[i];
+        addDot(dot[0], dot[1], dot[2], false);
+        for (let n in dot[3]){
+            const connected_dot = dotsPos[n];
+            addLine([dot[0], dot[1]], [connected_dot[0], connected_dot[1]]);
+        }
     }
 }
 
