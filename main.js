@@ -13,7 +13,7 @@ function main() {
         const x = e.clientX - rect.left
         const y = e.clientY - rect.top
 
-        if (e.target === canvas && e.buttons === 1 || e.buttons === 2) {
+        if (e.target === canvas && e.buttons === 1 || e.target === canvas && e.buttons === 2) {
             let clickedOnDot = {
                 condition: false,
                 x: 0,
@@ -52,23 +52,27 @@ function main() {
             } else {
                 lastClicked = [];
                 const label = window.prompt("Nova vértice", "Ponto " + dotsPos.length);
-                addDot(x, y, label);
-                lastMove.previus = lastMove;
-                if (lastMove.first) lastMove.first = false;
-                lastMove.dot = true;
-                lastMove.line = false;
+                if (label){
+                    addDot(x, y, label);
+                    lastMove.previus = lastMove;
+                    if (lastMove.first) lastMove.first = false;
+                    lastMove.dot = true;
+                    lastMove.line = false;
+                }
             }
         }
     });
 
     function addRandomDot() {
         const label = window.prompt("Nova vértice", "Ponto " + dotsPos.length);
-        const padding = 5;
-        addDot(
-            Math.random() * (canvas.width - padding - padding) + padding,
-            Math.random() * (canvas.height - padding - padding) + padding,
-            label
-        );
+        if (label){
+            const padding = 5;
+            addDot(
+                Math.random() * (canvas.width - padding - padding) + padding,
+                Math.random() * (canvas.height - padding - padding) + padding,
+                label
+            );
+        }
     }
 
 
