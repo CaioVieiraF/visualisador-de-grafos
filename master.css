@@ -144,3 +144,47 @@ div.theme button.dark {
 div.theme button.pastel-green {
     background-color: var(--green-theme-primary);
 } */
+
+div.dot-info {
+    display: none;
+    position: absolute;
+    width: 10rem;
+    height: auto;
+    background: #CCC;
+    border: 2px solid grey;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    left: 190px;
+    top: 100px;
+    padding: 5px;
+}
+
+div.dot-info input{
+    background: #EEEEEE;
+    width: 95%;
+    height: 1.3rem;
+    margin: auto;
+    display: block;
+    border: 1px solid #DDDDDD;
+    border-radius: 0.5rem;
+}
+
+div.dot-info button{
+    width: 100%;
+    background: #4CAF50;
+    border-radius: 0.5rem;
+    border: none;
+    margin: none;
+    padding: 4px;
+    transition: 0.4s;
+}
+div.dot-info button:hover {
+    cursor: pointer;
+}
+
+div.dot-info select {
+    width: 100%;
+}
+div.dot-info option {
+    text-align: center;
+}

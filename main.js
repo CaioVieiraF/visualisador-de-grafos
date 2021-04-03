@@ -1,6 +1,10 @@
 const canvas = document.querySelector('canvas#canvas');
 const screen = canvas.getContext('2d');
 const radius = 10;
+const menu = document.querySelector('div.dot-info');
+const menuName = document.querySelector('div.dot-info input');
+const menuButton = document.querySelector('div.dot-info button');
+const menuList = document.querySelector('div.dot-info select');
 let dotsPos = [];
 let lastClicked = [];
 let drawLine = false;
@@ -13,7 +17,7 @@ function main() {
         const x = e.clientX - rect.left
         const y = e.clientY - rect.top
 
-        if (e.target === canvas && e.buttons === 1 || e.target === canvas && e.buttons === 2) {
+        if (e.target === canvas && (e.buttons === 1 || e.buttons === 2)) {
             let clickedOnDot = {
                 condition: false,
                 x: 0,
@@ -33,23 +37,25 @@ function main() {
                 }
             }
 
-            if (clickedOnDot.condition && lastClicked[0] != clickedOnDot.x && lastClicked[1] != clickedOnDot.y && e.buttons === 2) {
-                dotsPos[clickedOnDot.to][3].push(lastClicked[2]);
-                dotsPos[lastClicked[2]][3].push(clickedOnDot.to);
-                addLine(
-                    [lastClicked[0], lastClicked[1]],
-                    [
-                        clickedOnDot.x,
-                        clickedOnDot.y
-                    ]
-                );
-                lastClicked = [clickedOnDot.x, clickedOnDot.y, clickedOnDot.to];
+            if (clickedOnDot.condition && e.buttons === 2) {
+                //dotsPos[clickedOnDot.to][3].push(lastClicked[2]);
+                //dotsPos[lastClicked[2]][3].push(clickedOnDot.to);
+                //addLine(
+                //    [lastClicked[0], lastClicked[1]],
+                //    [
+                //        clickedOnDot.x,
+                //        clickedOnDot.y
+                //    ]
+                //);
+                //lastClicked = [clickedOnDot.x, clickedOnDot.y, clickedOnDot.to];
 
-                lastMove.previus = lastMove;
-                if (lastMove.first) lastMove.first = false;
-                lastMove.dot = false;
-                lastMove.line = true;
-            } else {
+                //lastMove.previus = lastMove;
+                //if (lastMove.first) lastMove.first = false;
+                //lastMove.dot = false;
+                //lastMove.line = true;
+                
+                editDot(clickedOnDot.to);
+            } else if (!clickedOnDot.condition && e.buttons === 1){
                 lastClicked = [];
                 const label = window.prompt("Nova vértice", "Ponto " + dotsPos.length);
                 if (label){
@@ -101,6 +107,27 @@ function main() {
 
     themeOptions();
 
+    function editDot(index){
+        const dot = dotsPos[index];
+        console.log(dot);
+        
+        menu.style.display = "block";
+
+        menuName.value = dot[2];
+        menuButton.onclick = () => {
+            dot[2] = menuName.value;
+
+            reRender();
+            menu.style.display = "none";
+        };
+
+        for (let each = 0; each < dot[3].length; each ++) {
+            const item = document.createElement('option');
+            item.text = dot[3][each];
+            menuList.appendChild(item);
+        }
+    }
+
     const buttonOptions = {
         Add: addRandomDot,
         'Line/Dot': changeDotLineMode,
@@ -125,6 +152,8 @@ function main() {
       e.preventDefault();
     }, false);
 }
+
+
 
 function themeOptions() {
     const themes = {
